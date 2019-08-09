@@ -1,4 +1,4 @@
-### docker + nginx + php-fpm + mysql + mongo + phpmyadmin + nginx-rtmp + postgresql
+﻿### docker + nginx + php-fpm + mysql + mongo + phpmyadmin + nginx-rtmp + postgresql
 
 # 使用
 ----
@@ -10,11 +10,11 @@ apt install docker-compose
 ```
 2. git clone 代码到本地
     ```
-    $ git clone https://github.com/yeechongyeung/Docker-Web-Env.git
+    $ git clone https://github.com/yeechongyeung/Docker-Web-Onestep.git
     ```
 3. 执行命令
     ```
-    $ cd Docker-Web-Env
+    $ cd Docker-Web-Onestep
     $ docker-compose up -d
     ```
 4. 默认站点在浏览器中访问 `localhost`
@@ -63,8 +63,10 @@ apt install docker-compose
 数据库工具箱：pgadmin4
 
 配置：
+```
 host: host IP
 port:55433
 database:postgres
 username:postgres
 password:123456
+```
