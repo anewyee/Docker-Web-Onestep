@@ -1,0 +1,111 @@
+version: "2"
+services:
+  redis:
+    image: redis
+    container_name: yee-redis
+    ports:
+      - "6379:6379"
+    # volumes:
+    networks:
+      - net-redis
+
+  nginx:
+    image: nginx
+    container_name: yee-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf/nginx/conf.d/:/etc/nginx/conf.d/:ro
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./log/nginx/:/var/log/nginx/:rw
+      - ./www/:/var/www/:rw
+    networks:
+      - net-php
+
+  php:
+    # build: ./php/php-fpm/ #dockerfile
+    image: php:7.1-fpm
+    container_name: yee-php71fpm
+    expose:
+      - "9000"
+    volumes:
+      - ./conf/php/php.ini:/etc/php/php.ini:ro
+      - ./conf/php/php-fpm.conf:/etc/php/php-fpm.conf:ro
+      - ./log/php/:/var/log/php/:rw
+      - ./www/:/var/www/:rw
+    networks:
+      - net-php
+      - net-mysql
+
+  mysql:
+    image: yeechongyeung/m-mysql:5.7
+    container_name: yee-mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./conf/mysql/my.cnf:/etc/mysql/my.cnf:ro
+      - ./log/mysql/:/var/log/mysql/:rw
+      - ./mysql/:/var/lib/mysql/:rw
+    environment:
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "123456"
+      MYSQL_ROOT_PASSWORD: "123456"
+    networks:
+      - net-mysql
+      
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: yee-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "123456"
+      MYSQL_ROOT_PASSWORD: "123456"
+      PMA_HOST: yee-mysql
+    networks:
+      - net-mysql
+
+  rtmpserver:
+    image: yeechongyeung/m-nginx-rtmp:latest
+    container_name: yee-rtmpserver
+    ports:
+      - "8090:8080"
+      - "1945:1935"
+    networks:
+      - net-video
+
+  mongo:
+    build: 
+      context: ./mongo
+      dockerfile: Dockerfile
+    container_name: yee-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo/db:/data/db:rw
+      - ./mongo/localtime:/etc/localtime:rw
+
+  postgresql:
+    image: kartoza/postgis:9.6-2.4
+    container_name: yee-postgis
+    ports:
+      - "55433:5432"
+    environment:
+      POSTGRES_USER: postgres 
+      POSTGRES_PASS: 123456 
+      ALLOW_IP_RANGE: 0.0.0.0/0 
+    restart: always
+    volumes:
+      - ./postgresql:/var/lib/postgresql:rw
+      - ./postgresql/tmp:/tmp/tmp:rw 
+    networks:
+      - net-postgresql
+networks:
+  net-php:
+  net-mysql:
+  net-redis:
+  net-video:
+  net-postgresql:
