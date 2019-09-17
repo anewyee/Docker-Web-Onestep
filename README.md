@@ -10,7 +10,7 @@ apt install docker-compose
 ```
 2. git clone 代码到本地
     ```
-    $ git clone https://github.com/yeechongyeung/Docker-Web-Env.git
+    $ git clone https://github.com/yeechongyeung/Docker-Web-Onestep.git
     ```
 3. 执行命令
     ```
